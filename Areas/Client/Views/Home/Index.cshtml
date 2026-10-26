@@ -1,0 +1,595 @@
+﻿@model Cinema_Booking_System.ViewModels.MovieListViewModel
+
+@{
+    ViewData["Title"] = "Movies";
+}
+
+
+<style>
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background-color: #17283d;
+    }
+
+    .cinema-page {
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0 4% 40px;
+        color: #f8fafc;
+        background: linear-gradient(
+            180deg,
+            #30465f 0%,
+            #263b53 45%,
+            #1d3047 100%
+        );
+        box-sizing: border-box;
+    }
+
+    .cinema-hero {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 320px;
+        margin: 0 -4.35% 28px;
+        padding: 45px 4.35% 55px;
+        box-sizing: border-box;
+        overflow: hidden;
+        background-color: #263b53;
+        background-image:
+            linear-gradient(
+                90deg,
+                rgba(17, 31, 49, 0.88) 0%,
+                rgba(17, 31, 49, 0.55) 50%,
+                rgba(17, 31, 49, 0.15) 100%
+            ),
+            linear-gradient(
+                180deg,
+                transparent 60%,
+                #263b53 100%
+            ),
+            url('/images/cinema-bg.jpg');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    .hero-tagline {
+        margin-bottom: 15px;
+        color: #ffbd48;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+
+    .cinema-hero h1 {
+        margin: 0 0 14px;
+        color: #ffffff;
+        font-size: clamp(38px, 5vw, 64px);
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .cinema-hero h1 span {
+        color: #ffbd48;
+        font-style: italic;
+    }
+
+    .cinema-hero p {
+        max-width: 540px;
+        margin: 0;
+        color: #e0e9f3;
+        font-size: 16px;
+        line-height: 1.8;
+    }
+
+    .cinema-filters {
+        display: grid;
+        grid-template-columns: 2fr 1.3fr 1.3fr 0.8fr 0.8fr auto auto;
+        gap: 10px;
+        align-items: center;
+        padding: 17px;
+        margin-bottom: 25px;
+        background: rgba(38, 59, 83, 0.92);
+        border: 1px solid #49617b;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(5, 15, 28, 0.16);
+    }
+
+    .cinema-filters .form-control,
+    .cinema-filters .form-select {
+        min-width: 0;
+        min-height: 42px;
+        background-color: #192d44;
+        border: 1px solid #526b87;
+        color: #f8fafc;
+        border-radius: 8px;
+    }
+
+    .cinema-filters .form-control::placeholder {
+        color: #b8c8d9;
+    }
+
+    .cinema-filters .form-select option {
+        color: #ffffff;
+        background-color: #192d44;
+    }
+
+    .cinema-filters .form-control:focus,
+    .cinema-filters .form-select:focus {
+        border-color: #ffbd48;
+        box-shadow: 0 0 0 3px rgba(255, 189, 72, 0.15);
+    }
+
+    .btn-filter {
+        min-height: 42px;
+        padding: 9px 18px;
+        color: #17283d;
+        font-weight: 700;
+        background: #ffbd48;
+        border: 1px solid #ffbd48;
+        border-radius: 8px;
+        transition: 0.2s ease;
+    }
+
+    .btn-filter:hover {
+        color: #17283d;
+        background: #ffd078;
+        border-color: #ffd078;
+    }
+
+    .btn-reset {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 9px 15px;
+        color: #e0e9f3;
+        text-decoration: none;
+        border: 1px solid #526b87;
+        border-radius: 8px;
+        transition: 0.2s ease;
+    }
+
+    .btn-reset:hover {
+        color: #ffffff;
+        background: #405771;
+        border-color: #7188a2;
+    }
+
+    .movie-card {
+        height: 100%;
+        color: #f8fafc;
+        background: linear-gradient(145deg, #304760, #22364d);
+        border: 1px solid #49617b;
+        border-radius: 13px;
+        overflow: hidden;
+        box-shadow: 0 7px 22px rgba(5, 15, 28, 0.18);
+        transition:
+            transform 0.25s ease,
+            border-color 0.25s ease,
+            box-shadow 0.25s ease;
+    }
+
+    .movie-card:hover {
+        transform: translateY(-5px);
+        border-color: #ffbd48;
+        box-shadow: 0 13px 30px rgba(5, 15, 28, 0.3);
+    }
+
+    .movie-poster {
+        position: relative;
+        height: 190px;
+        overflow: hidden;
+        background: #263b53;
+    }
+
+    .movie-poster img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .movie-card:hover .movie-poster img {
+        transform: scale(1.05);
+    }
+
+    .movie-card .card-body {
+        padding: 18px;
+    }
+
+    .movie-card .card-title {
+        margin-bottom: 10px;
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .movie-card .movie-category {
+        display: inline-block;
+        padding: 5px 10px;
+        color: #ffcf72;
+        font-size: 12px;
+        font-weight: 600;
+        background: rgba(255, 189, 72, 0.12);
+        border: 1px solid rgba(255, 189, 72, 0.3);
+        border-radius: 20px;
+    }
+
+    .movie-card .movie-location,
+    .movie-card .movie-description,
+    .movie-card .movie-date {
+        color: #d0dce9;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .movie-card .movie-description {
+        margin-top: 10px;
+    }
+
+    .movie-card .movie-price {
+        color: #ffcf72;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .movie-card .movie-status {
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+  
+ 
+    .movie-card .btn-book {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 12px 18px;
+        color: #263b53 !important;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        background: #ffe8b3 !important;
+        border: 1px solid #ffe8b3 !important;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(255, 212, 119, 0.15);
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+
+    .movie-card .btn-book:hover {
+        color: #17283d !important;
+        background: #ffd477 !important;
+        border-color: #ffd477 !important;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 212, 119, 0.3);
+    }
+
+    .movie-card .btn-book:active {
+        background: #f5c35f !important;
+        border-color: #f5c35f !important;
+        transform: scale(0.97);
+        box-shadow: none;
+    }
+
+
+
+
+    .movie-card .btn-sold-out {
+        display: inline-block;
+        padding: 9px 15px;
+        color: #e0e9f3;
+        background: #52657b;
+        border: 1px solid #637991;
+        border-radius: 8px;
+        cursor: not-allowed;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        padding: 40px 15px;
+        color: #e1eaf4;
+        text-align: center;
+        background: #263b53;
+        border: 1px solid #49617b;
+        border-radius: 12px;
+    }
+
+    .empty-state h4 {
+        margin-bottom: 10px;
+        color: #ffffff;
+    }
+
+    .pagination {
+        gap: 6px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .pagination .page-link {
+        color: #e0e9f3;
+        background: #263b53;
+        border: 1px solid #49617b;
+        border-radius: 7px;
+    }
+
+    .pagination .page-link:hover {
+        color: #17283d;
+        background: #ffbd48;
+        border-color: #ffbd48;
+    }
+
+    .pagination .active .page-link {
+        color: #17283d;
+        font-weight: 700;
+        background: #ffbd48;
+        border-color: #ffbd48;
+    }
+
+    @@media (max-width: 1100px) {
+        .cinema-filters {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .cinema-filters .search-field {
+            grid-column: span 3;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .cinema-page {
+            padding: 0 12px 30px;
+        }
+
+        .cinema-hero {
+            min-height: 260px;
+            margin: 0 -12px 22px;
+            padding: 30px 17px 35px;
+            background-position: center;
+        }
+
+        .hero-tagline {
+            font-size: 10px;
+            letter-spacing: 2px;
+        }
+
+        .cinema-hero h1 {
+            font-size: 40px;
+        }
+
+        .cinema-hero p {
+            font-size: 14px;
+        }
+
+        .cinema-filters {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            padding: 12px;
+        }
+
+        .cinema-filters .search-field {
+            grid-column: span 2;
+        }
+
+        .cinema-filters .form-control,
+        .cinema-filters .form-select {
+            width: 100%;
+        }
+
+        .movie-poster {
+            height: 210px;
+        }
+    }
+</style>
+
+
+<div class="cinema-page">
+
+    <section class="cinema-hero">
+        <p class="hero-tagline">✦ BETTER MOVIES&nbsp; • &nbsp;BIGGER EMOTIONS</p>
+
+        <h1>Now <span>Showing</span></h1>
+
+        <p class="hero-description">
+            Discover the latest movies and book your tickets
+            for an unforgettable cinema experience.
+        </p>
+    </section>
+
+    <form method="get"
+
+          asp-area="Client"
+          asp-controller="Home"
+          asp-action="Index"
+          class="cinema-filters">
+
+        <input type="text"
+               name="search"
+               value="@Model.Search"
+               class="form-control search-field"
+               placeholder="⌕  Search movie..." />
+
+        <select name="categoryId" class="form-select">
+            <option value="">All Categories</option>
+            @foreach (var c in Model.Categories)
+            {
+                <option value="@c.Id" selected="@(Model.CategoryId == c.Id)">
+                    @c.Name
+                </option>
+            }
+        </select>
+
+        <select name="cinemaId" class="form-select">
+            <option value="">All Cinemas</option>
+            @foreach (var c in Model.Cinemas)
+            {
+                <option value="@c.Id" selected="@(Model.CinemaId == c.Id)">
+                    @c.Name
+                </option>
+            }
+        </select>
+
+        <input type="number"
+               name="minPrice"
+               value="@Model.MinPrice"
+               class="form-control"
+               placeholder="Min" />
+
+        <input type="number"
+               name="maxPrice"
+               value="@Model.MaxPrice"
+               class="form-control"
+               placeholder="Max" />
+
+        <button type="submit" class="btn-filter">⚑ Filter</button>
+        <a asp-area="Client"
+           asp-controller="Home"
+           asp-action="Index"
+           class="btn-reset d-flex align-items-center justify-content-center">
+            ↻ Reset
+        </a>
+    </form>
+
+    <div class="row">
+        @foreach (var m in Model.Movies)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card movie-card">
+
+                    <div class="movie-poster">
+                        <img src="~/images/movies/@m.MainImg"
+                             alt="@m.Name"
+                             onerror="this.onerror=null;this.src='https://placehold.co/400x250/10243b/ffffff?text=Movie+Poster';" />
+
+                        <span class="badge movie-category">
+                            @m.Category.Name
+                        </span>
+
+                        @if (m.Status)
+                        {
+                            <span class="badge bg-success movie-status">
+                                Available
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary movie-status">
+                                Unavailable
+                            </span>
+                        }
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">@m.Name</h5>
+
+                        <p class="movie-location mb-2">
+                            <i class="bi bi-geo-alt"></i>
+                            @m.Cinema.Name
+                        </p>
+
+                        <p class="movie-desc mb-2">@m.Des</p>
+
+                        <small class="movie-date d-block">
+                            <i class="bi bi-calendar3"></i>
+                            @m.DateTime.ToString("ddd, dd MMM yyyy")
+                            &nbsp; • &nbsp;
+                            @m.DateTime.ToString("hh:mm tt")
+                        </small>
+                    </div>
+
+                    <div class="card-footer">
+                        <span class="movie-price">
+                            @m.Price.ToString("0.##") EGP
+                        </span>
+
+                        @if (m.Status)
+                        {
+                            <a href="#" class="btn btn-book">Book Now</a>
+                        }
+                        else
+                        {
+                            <button class="btn sold-btn" disabled>
+                                Sold Out
+                            </button>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
+
+        @if (!Model.Movies.Any())
+        {
+            <div class="empty-state">
+                <h5>No movies found</h5>
+                <p class="mb-0">Try changing your search or filters.</p>
+            </div>
+        }
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav aria-label="Movie pages">
+            <ul class="pagination justify-content-center">
+
+                <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-area="Client"
+                       asp-controller="Home"
+                       asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage - 1)"
+                       asp-route-search="@Model.Search"
+                       asp-route-categoryId="@Model.CategoryId"
+                       asp-route-cinemaId="@Model.CinemaId"
+                       asp-route-minPrice="@Model.MinPrice"
+                       asp-route-maxPrice="@Model.MaxPrice">
+                        ‹ Previous
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link"
+                           asp-area="Client"
+                           asp-controller="Home"
+                           asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-search="@Model.Search"
+                           asp-route-categoryId="@Model.CategoryId"
+                           asp-route-cinemaId="@Model.CinemaId"
+                           asp-route-minPrice="@Model.MinPrice"
+                           asp-route-maxPrice="@Model.MaxPrice">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-area="Client"
+                       asp-controller="Home"
+                       asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage + 1)"
+                       asp-route-search="@Model.Search"
+                       asp-route-categoryId="@Model.CategoryId"
+                       asp-route-cinemaId="@Model.CinemaId"
+                       asp-route-minPrice="@Model.MinPrice"
+                       asp-route-maxPrice="@Model.MaxPrice">
+                        Next ›
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    }
+
+</div>

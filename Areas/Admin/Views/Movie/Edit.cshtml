@@ -1,0 +1,90 @@
+﻿@model Cinema_Booking_System.ViewModels.MovieFormViewModel
+@{
+    ViewData["Title"] = "Edit Movie";
+}
+
+<div class="card">
+    <div class="card-header"><h5 class="mb-0">Edit Movie</h5></div>
+    <div class="card-body">
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <form asp-area="Admin" asp-controller="Movie" asp-action="Edit" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Movie.Id" />
+
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input asp-for="Movie.Name" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Main Image</label><br />
+                @if (!string.IsNullOrEmpty(Model.Movie.MainImg))
+                {
+                    <img src="~/images/movies/@Model.Movie.MainImg" width="120" class="rounded mb-2"
+                         onerror="this.style.display='none'" />
+                }
+                <input type="file" name="mainImg" class="form-control" accept="image/*" />
+                <small class="text-muted">Leave empty to keep the current image</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Sub Images</label>
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    @foreach (var s in Model.Movie.SubImages)
+                    {
+                        <img src="~/images/movies/@s.Img" width="80" class="rounded"
+                             onerror="this.style.display='none'" />
+                    }
+                </div>
+                <input type="file" name="subImages" class="form-control" accept="image/*" multiple />
+                <small class="text-muted">New images are added to the existing ones</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea asp-for="Movie.Des" class="form-control" rows="4"></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Price</label>
+                    <input asp-for="Movie.Price" class="form-control" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Date & Time</label>
+                    <input name="Movie.DateTime" type="datetime-local" class="form-control"
+                           value="@Model.Movie.DateTime.ToString("yyyy-MM-ddTHH:mm")" />
+                </div>
+                <div class="col-md-4 mb-3 d-flex align-items-end">
+                    <div class="form-check">
+                        <input asp-for="Movie.Status" class="form-check-input" />
+                        <label class="form-check-label">Available</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Category</label>
+                    <select asp-for="Movie.CategoryId" asp-items="Model.Categories" class="form-select">
+                        <option value="">-- Select --</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Cinema</label>
+                    <select asp-for="Movie.CinemaId" asp-items="Model.Cinemas" class="form-select">
+                        <option value="">-- Select --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Actors (hold Ctrl to select many)</label>
+                <select asp-for="SelectedActorIds" asp-items="Model.Actors" class="form-select" multiple size="5"></select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a asp-area="Admin" asp-controller="Movie" asp-action="Index" class="btn btn-outline-secondary">Back</a>
+        </form>
+    </div>
+</div>

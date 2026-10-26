@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row g-3 mb-3">
+    <div class="col-md-6 col-xxl-3">
+        <div class="card h-100"><div class="card-body">
+            <h6 class="text-700">Movies</h6>
+            <h2 class="text-primary mb-0">@ViewBag.Movies</h2>
+        </div></div>
+    </div>
+    <div class="col-md-6 col-xxl-3">
+        <div class="card h-100"><div class="card-body">
+            <h6 class="text-700">Categories</h6>
+            <h2 class="text-success mb-0">@ViewBag.Categories</h2>
+        </div></div>
+    </div>
+    <div class="col-md-6 col-xxl-3">
+        <div class="card h-100"><div class="card-body">
+            <h6 class="text-700">Cinemas</h6>
+            <h2 class="text-warning mb-0">@ViewBag.Cinemas</h2>
+        </div></div>
+    </div>
+    <div class="col-md-6 col-xxl-3">
+        <div class="card h-100"><div class="card-body">
+            <h6 class="text-700">Actors</h6>
+            <h2 class="text-info mb-0">@ViewBag.Actors</h2>
+        </div></div>
+    </div>
+</div>

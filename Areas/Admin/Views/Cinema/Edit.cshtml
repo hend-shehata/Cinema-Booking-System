@@ -1,0 +1,28 @@
+﻿@model Cinema_Booking_System.Models.Cinema
+@{
+    ViewData["Title"] = "Edit Cinema";
+}
+
+<div class="card">
+    <div class="card-header"><h5 class="mb-0">Edit Cinema</h5></div>
+    <div class="card-body">
+        <form asp-area="Admin" asp-controller="Cinema" asp-action="Edit" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Current Image</label><br />
+                @if (!string.IsNullOrEmpty(Model.Img))
+                {
+                    <img src="~/images/cinemas/@Model.Img" width="120" class="rounded mb-2" />
+                }
+                <input type="file" name="img" class="form-control" accept="image/*" />
+                <small class="text-muted">Leave empty to keep the current image</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a asp-area="Admin" asp-controller="Cinema" asp-action="Index" class="btn btn-outline-secondary">Back</a>
+        </form>
+    </div>
+</div>
