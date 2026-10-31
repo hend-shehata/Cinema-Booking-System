@@ -1,4 +1,5 @@
 using Cinema_Booking_System.Data;
+using Cinema_Booking_System.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cinema_Booking_System
@@ -13,7 +14,17 @@ namespace Cinema_Booking_System
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped(
+            typeof(IRepository<>),
+            typeof(Repository<>)
+                 );
+
+            builder.Services.AddScoped<
+                IMovieSubImageRepository,
+                MovieSubImageRepository>();
+
             var app = builder.Build();
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

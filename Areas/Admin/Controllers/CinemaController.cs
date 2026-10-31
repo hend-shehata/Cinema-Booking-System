@@ -1,23 +1,67 @@
-﻿using Cinema_Booking_System.Data;
+﻿
+using Cinema_Booking_System.Data;
 using Cinema_Booking_System.Models;
+using Cinema_Booking_System.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Cinema_Booking_System.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class CinemaController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly Repository<Cinema> _cinemaRepository;
 
         public CinemaController(ApplicationDbContext context)
         {
-            _context = context;
+            _cinemaRepository = new Repository<Cinema>(context);
         }
 
-        public IActionResult Index()
+        private string CinemasFolder =>
+            Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "images",
+                "cinemas"
+            );
+
+        private string SaveFile(IFormFile file)
         {
-            var cinemas = _context.Cinemas.Include(c => c.Movies).ToList();
+            Directory.CreateDirectory(CinemasFolder);
+
+            var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+
+            var path = Path.Combine(CinemasFolder, fileName);
+
+            using (var stream = System.IO.File.Create(path))
+            {
+                file.CopyTo(stream);
+            }
+
+            return fileName;
+        }
+
+        private void DeleteFile(string? fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return;
+
+            var path = Path.Combine(CinemasFolder, fileName);
+
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var cinemas = await _cinemaRepository.GetAllAsync(
+                includes: new Expression<Func<Cinema, object>>[]
+                {
+                    c => c.Movies
+                },
+                isTracked: false
+            );
+
             return View(cinemas);
         }
 
@@ -27,7 +71,7 @@ namespace Cinema_Booking_System.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Cinema cinema, IFormFile? img)
+        public async Task<IActionResult> Create(Cinema cinema, IFormFile? img)
         {
             if (string.IsNullOrWhiteSpace(cinema.Name))
             {
@@ -37,71 +81,71 @@ namespace Cinema_Booking_System.Areas.Admin.Controllers
 
             if (img != null && img.Length > 0)
             {
-                var fileName = Guid.NewGuid() + Path.GetExtension(img.FileName);
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "cinemas", fileName);
-                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-
-                using (var stream = System.IO.File.Create(path))
-                {
-                    img.CopyTo(stream);
-                }
-                cinema.Img = fileName;
+                cinema.Img = SaveFile(img);
             }
 
-            _context.Cinemas.Add(cinema);
-            _context.SaveChanges();
+            await _cinemaRepository.AddAsync(cinema);
+            await _cinemaRepository.CommitAsync();
+
             TempData["Success"] = "Cinema added successfully";
+
             return RedirectToAction("Index");
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var cinema = _context.Cinemas.Find(id);
-            if (cinema == null) return NotFound();
+            var cinema = await _cinemaRepository.GetOneAsync(
+                c => c.Id == id
+            );
+
+            if (cinema == null)
+                return NotFound();
+
             return View(cinema);
         }
 
         [HttpPost]
-        public IActionResult Edit(Cinema cinema, IFormFile? img)
+        public async Task<IActionResult> Edit(Cinema cinema, IFormFile? img)
         {
-            var old = _context.Cinemas.AsNoTracking().FirstOrDefault(c => c.Id == cinema.Id);
-            if (old == null) return NotFound();
+            var old = await _cinemaRepository.GetOneAsync(
+                c => c.Id == cinema.Id,
+                isTracked: false
+            );
+
+            if (old == null)
+                return NotFound();
 
             if (img != null && img.Length > 0)
             {
-                var fileName = Guid.NewGuid() + Path.GetExtension(img.FileName);
-                var folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "cinemas");
-                Directory.CreateDirectory(folder);
-
-                using (var stream = System.IO.File.Create(Path.Combine(folder, fileName)))
-                {
-                    img.CopyTo(stream);
-                }
-
-                // امسحي الصورة القديمة
-                if (!string.IsNullOrEmpty(old.Img))
-                {
-                    var oldPath = Path.Combine(folder, old.Img);
-                    if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
-                }
-                cinema.Img = fileName;
+                cinema.Img = SaveFile(img);
+                DeleteFile(old.Img);
             }
             else
             {
-                cinema.Img = old.Img; // سيبي الصورة القديمة
+                cinema.Img = old.Img;
             }
 
-            _context.Cinemas.Update(cinema);
-            _context.SaveChanges();
+            _cinemaRepository.Update(cinema);
+            await _cinemaRepository.CommitAsync();
+
             TempData["Success"] = "Cinema updated successfully";
+
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var cinema = _context.Cinemas.Include(c => c.Movies).FirstOrDefault(c => c.Id == id);
-            if (cinema == null) return NotFound();
+            var cinema = await _cinemaRepository.GetOneAsync(
+                c => c.Id == id,
+                new Expression<Func<Cinema, object>>[]
+                {
+                    c => c.Movies
+                }
+            );
+
+            if (cinema == null)
+                return NotFound();
 
             if (cinema.Movies.Any())
             {
@@ -109,15 +153,13 @@ namespace Cinema_Booking_System.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
 
-            if (!string.IsNullOrEmpty(cinema.Img))
-            {
-                var p = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "cinemas", cinema.Img);
-                if (System.IO.File.Exists(p)) System.IO.File.Delete(p);
-            }
+            DeleteFile(cinema.Img);
 
-            _context.Cinemas.Remove(cinema);
-            _context.SaveChanges();
+            _cinemaRepository.Remove(cinema);
+            await _cinemaRepository.CommitAsync();
+
             TempData["Success"] = "Cinema deleted successfully";
+
             return RedirectToAction("Index");
         }
     }

@@ -1,25 +1,28 @@
-﻿using Cinema_Booking_System.Data;
+﻿
 using Cinema_Booking_System.Models;
+using Cinema_Booking_System.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Cinema_Booking_System.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRepository<Category> _categoryRepository;
 
-        public CategoryController(ApplicationDbContext context)
+        public CategoryController(
+            IRepository<Category> categoryRepository)
         {
-            _context = context;
+            _categoryRepository = categoryRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var categories = _context.Categories
-                .Include(c => c.Movies)
-                .ToList();
+            var categories = await _categoryRepository.GetAllAsync(
+                isTracked: false
+            );
+
             return View(categories);
         }
 
@@ -29,7 +32,7 @@ namespace Cinema_Booking_System.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Category category)
+        public async Task<IActionResult> Create(Category category)
         {
             if (string.IsNullOrWhiteSpace(category.Name))
             {
@@ -37,21 +40,28 @@ namespace Cinema_Booking_System.Areas.Admin.Controllers
                 return View(category);
             }
 
-            _context.Categories.Add(category);
-            _context.SaveChanges();
+            await _categoryRepository.AddAsync(category);
+            await _categoryRepository.CommitAsync();
+
             TempData["Success"] = "Category added successfully";
+
             return RedirectToAction("Index");
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var category = _context.Categories.Find(id);
-            if (category == null) return NotFound();
+            var category = await _categoryRepository.GetOneAsync(
+                c => c.Id == id
+            );
+
+            if (category == null)
+                return NotFound();
+
             return View(category);
         }
 
         [HttpPost]
-        public IActionResult Edit(Category category)
+        public async Task<IActionResult> Edit(Category category)
         {
             if (string.IsNullOrWhiteSpace(category.Name))
             {
@@ -59,30 +69,41 @@ namespace Cinema_Booking_System.Areas.Admin.Controllers
                 return View(category);
             }
 
-            _context.Categories.Update(category);
-            _context.SaveChanges();
+            _categoryRepository.Update(category);
+            await _categoryRepository.CommitAsync();
+
             TempData["Success"] = "Category updated successfully";
+
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var category = _context.Categories
-                .Include(c => c.Movies)
-                .FirstOrDefault(c => c.Id == id);
+            var category = await _categoryRepository.GetOneAsync(
+                c => c.Id == id,
+                new Expression<Func<Category, object>>[]
+                {
+                    c => c.Movies
+                }
+            );
 
-            if (category == null) return NotFound();
+            if (category == null)
+                return NotFound();
 
             if (category.Movies.Any())
             {
-                TempData["Error"] = "Can't delete a category that has movies";
+                TempData["Error"] =
+                    "Can't delete a category that has movies";
+
                 return RedirectToAction("Index");
             }
 
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
+            _categoryRepository.Remove(category);
+            await _categoryRepository.CommitAsync();
+
             TempData["Success"] = "Category deleted successfully";
+
             return RedirectToAction("Index");
         }
     }
