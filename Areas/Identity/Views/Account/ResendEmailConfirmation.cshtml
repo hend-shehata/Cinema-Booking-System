@@ -1,0 +1,39 @@
+﻿@model Cinema_Booking_System.ViewModels.ResendEmailConfirmationVM
+
+@{
+    ViewData["Title"] = "Resend Confirmation";
+    Layout = "_Layout";
+}
+
+<div class="account-page">
+    <div class="account-card">
+        <div class="account-brand">CINÉMA.</div>
+
+        <h2>Resend Confirmation</h2>
+        <p class="account-desc">
+            Enter your email to receive a new confirmation link.
+        </p>
+
+        <form asp-action="ResendEmailConfirmation" method="post">
+            <div asp-validation-summary="ModelOnly"
+                 class="account-validation mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Email">Email Address</label>
+                <input asp-for="Email"
+                       class="form-control account-input"
+                       placeholder="name@example.com" />
+                <span asp-validation-for="Email"
+                      class="account-validation"></span>
+            </div>
+
+            <button type="submit" class="account-btn">
+                RESEND CONFIRMATION
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

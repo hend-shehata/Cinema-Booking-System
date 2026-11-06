@@ -1,0 +1,195 @@
+﻿@model Cinema_Booking_System.ViewModels.LoginVM
+
+@{
+    ViewData["Title"] = "Sign In";
+    Layout = "_Layout";
+}
+
+<style>
+    .login-page {
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 50px 20px;
+        background: radial-gradient(circle at top, #292318, #11151e 55%, #090b10);
+        color: white;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 470px;
+        padding: 45px;
+        background: #151a24;
+        border: 1px solid #303744;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px #0008;
+    }
+
+    .login-brand {
+        color: #d8ae62;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 3px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .login-card h2 {
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+        color: #9298a5;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 14px;
+    }
+
+    .login-label {
+        color: #d8dbe2;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .login-input {
+        background: #1e2531 !important;
+        border: 1px solid #343d4b !important;
+        color: white !important;
+        padding: 13px !important;
+        border-radius: 9px !important;
+    }
+
+        .login-input:focus {
+            border-color: #d8ae62 !important;
+            box-shadow: 0 0 0 3px #d8ae6220 !important;
+        }
+
+        .login-input::placeholder {
+            color: #7e8795;
+        }
+
+    .login-btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 9px;
+        margin-top: 15px;
+        background: linear-gradient(135deg, #e4c17e, #b98b43);
+        color: #17130c;
+        font-weight: 800;
+        transition: .3s;
+    }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px #d8ae6230;
+        }
+
+    .login-extra {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #aab0bc;
+        font-size: 13px;
+        margin-top: 15px;
+    }
+
+        .login-extra a, .register-link a {
+            color: #d8ae62;
+            text-decoration: none;
+        }
+
+    .register-link {
+        color: #9298a5;
+        text-align: center;
+        margin-top: 25px;
+        font-size: 14px;
+    }
+
+    .login-validation {
+        color: #ff7777;
+        font-size: 12px;
+    }
+
+    .remember-check {
+        accent-color: #d8ae62;
+    }
+</style>
+
+<div class="login-page">
+    <div class="login-card">
+
+        <div class="login-brand">CINÉMA.</div>
+
+        <h2>Welcome Back</h2>
+        <p class="login-subtitle">
+            Sign in to continue your cinema experience.
+        </p>
+
+        <form asp-area="Identity"
+              asp-controller="Account"
+              asp-action="Login"
+              method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="login-validation mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="UserNameOrEmail" class="login-label">
+                    Username or Email
+                </label>
+                <input asp-for="UserNameOrEmail"
+                       class="form-control login-input"
+                       placeholder="Enter your username or email" />
+                <span asp-validation-for="UserNameOrEmail"
+                      class="login-validation"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="login-label">
+                    Password
+                </label>
+                <input asp-for="Password"
+                       class="form-control login-input"
+                       placeholder="Enter your password" />
+                <span asp-validation-for="Password"
+                      class="login-validation"></span>
+            </div>
+
+            <div class="login-extra">
+                <label>
+                    <input asp-for="RememberMe" class="remember-check" />
+                    Remember me
+                </label>
+
+                <a asp-area="Identity"
+                   asp-controller="Account"
+                   asp-action="ForgetPassword">
+                    Forgot Password?
+                </a>
+            </div>
+
+            <button type="submit" class="login-btn">
+                SIGN IN
+            </button>
+        </form>
+
+        <div class="register-link">
+            Don't have an account?
+            <a asp-area="Identity"
+               asp-controller="Account"
+               asp-action="Register">
+                Create Account
+            </a>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,44 @@
+﻿@model Cinema_Booking_System.ViewModels.VerifyOTPVM
+
+@{
+    ViewData["Title"] = "Verify OTP";
+    Layout = "_Layout";
+}
+
+<div class="account-page">
+    <div class="account-card">
+        <div class="account-brand">CINÉMA.</div>
+
+        <h2>Verify Your Email</h2>
+        <p class="account-desc">
+            Enter the 6-digit verification code sent to your email.
+            The code expires in 10 minutes.
+        </p>
+
+        <form asp-action="VerifyOTP" method="post">
+            <div asp-validation-summary="ModelOnly"
+                 class="account-validation mb-3"></div>
+
+            <input asp-for="Email" type="hidden" />
+
+            <div class="mb-3">
+                <label asp-for="OTP">Verification Code</label>
+                <input asp-for="OTP"
+                       class="form-control account-input text-center"
+                       placeholder="000000"
+                       maxlength="6"
+                       inputmode="numeric" />
+                <span asp-validation-for="OTP"
+                      class="account-validation"></span>
+            </div>
+
+            <button type="submit" class="account-btn">
+                VERIFY CODE
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

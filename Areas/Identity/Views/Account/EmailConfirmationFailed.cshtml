@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Confirmation Failed";
+    Layout = "_Layout";
+}
+
+<div class="account-page">
+    <div class="account-card text-center">
+        <div class="account-brand">CINÉMA.</div>
+        <h2>Confirmation Failed</h2>
+        <p class="account-desc">
+            The confirmation link is invalid or expired.
+            You can request a new confirmation email.
+        </p>
+        <a asp-action="ResendEmailConfirmation"
+           class="account-btn d-block text-decoration-none">
+            RESEND EMAIL
+        </a>
+    </div>
+</div>

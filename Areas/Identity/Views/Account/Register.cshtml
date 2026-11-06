@@ -1,0 +1,291 @@
+﻿@model Cinema_Booking_System.ViewModels.RegisterVM
+
+@{
+    ViewData["Title"] = "Create Account";
+    Layout = "_Layout";
+}
+
+<style>
+    .register-page {
+        min-height: 90vh;
+        background:
+            radial-gradient(circle at 15% 20%, rgba(190, 145, 65, .13), transparent 35%),
+            linear-gradient(135deg, #090b10, #151923 55%, #090b10);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 65px 20px;
+        color: #fff;
+    }
+
+    .register-container {
+        width: 100%;
+        max-width: 1050px;
+        min-height: 650px;
+        display: grid;
+        grid-template-columns: 1fr 1.1fr;
+        background: #11151e;
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 25px 70px rgba(0,0,0,.5);
+    }
+
+    .register-info {
+        position: relative;
+        padding: 55px 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background:
+            linear-gradient(180deg, rgba(8,10,15,.3), rgba(8,10,15,.95)),
+            radial-gradient(circle at 50% 30%, #66502b, #20232c 60%, #10131b);
+    }
+
+    .brand {
+        color: #d8ae62;
+        font-size: 23px;
+        font-weight: 800;
+        letter-spacing: 2px;
+    }
+
+    .info-content h1 {
+        font-size: clamp(35px, 4vw, 52px);
+        font-weight: 800;
+        line-height: 1.15;
+        margin-bottom: 20px;
+    }
+
+    .info-content h1 span {
+        color: #d8ae62;
+    }
+
+    .info-content p {
+        color: #b6b9c2;
+        line-height: 1.8;
+        font-size: 15px;
+        max-width: 340px;
+    }
+
+    .info-footer {
+        color: #888d99;
+        font-size: 13px;
+    }
+
+    .register-form-section {
+        padding: 50px 55px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .form-heading h2 {
+        font-size: 30px;
+        font-weight: 750;
+        margin-bottom: 8px;
+    }
+
+    .form-heading p {
+        color: #9298a5;
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+
+    .form-label {
+        color: #d8dbe2;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .cinema-input {
+        background: #1a202b !important;
+        border: 1px solid #303744 !important;
+        color: #fff !important;
+        border-radius: 9px !important;
+        padding: 13px 15px !important;
+        font-size: 14px !important;
+        transition: .25s ease;
+    }
+
+    .cinema-input:focus {
+        border-color: #d8ae62 !important;
+        box-shadow: 0 0 0 3px rgba(216,174,98,.12) !important;
+    }
+
+    .cinema-input::placeholder {
+        color: #747b89;
+    }
+
+    .register-btn {
+        width: 100%;
+        padding: 14px;
+        margin-top: 12px;
+        border: none;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #e4c17e, #b98b43);
+        color: #17130c;
+        font-weight: 800;
+        font-size: 15px;
+        transition: .3s ease;
+    }
+
+    .register-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(216,174,98,.2);
+        background: linear-gradient(135deg, #f0d394, #c69a53);
+    }
+
+    .login-link {
+        text-align: center;
+        color: #969ba7;
+        font-size: 14px;
+        margin-top: 22px;
+    }
+
+    .login-link a {
+        color: #d8ae62;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    .validation-message {
+        color: #ff7777;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    @@media (max-width: 768px) {
+        .register-container {
+            grid-template-columns: 1fr;
+        }
+
+        .register-info {
+            min-height: 230px;
+            padding: 30px;
+        }
+
+        .info-content h1 {
+            font-size: 34px;
+        }
+
+        .info-footer {
+            display: none;
+        }
+
+        .register-form-section {
+            padding: 35px 25px;
+        }
+    }
+</style>
+
+<div class="register-page">
+    <div class="register-container">
+
+        <div class="register-info">
+            <div class="brand">CINÉMA.</div>
+
+            <div class="info-content">
+                <h1>
+                    Your Next<br />
+                    Great <span>Movie</span><br />
+                    Starts Here.
+                </h1>
+
+                <p>
+                    Create your account and discover a world of movies,
+                    unforgettable stories, and amazing cinema experiences.
+                </p>
+            </div>
+
+            <div class="info-footer">
+                © 2026 CINÉMA. All rights reserved.
+            </div>
+        </div>
+
+        <div class="register-form-section">
+
+            <div class="form-heading">
+                <h2>Create Account</h2>
+                <p>Join us today. It only takes a minute.</p>
+            </div>
+
+            <form asp-area="Identity"
+                  asp-controller="Account"
+                  asp-action="Register"
+                  method="post">
+
+                <div asp-validation-summary="All"
+                     class="validation-message mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Full Name</label>
+                    <input asp-for="Name"
+                           class="form-control cinema-input"
+                           placeholder="Enter your full name" />
+                    <span asp-validation-for="Name"
+                          class="validation-message"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">Email Address</label>
+                    <input asp-for="Email"
+                           class="form-control cinema-input"
+                           placeholder="name@example.com" />
+                    <span asp-validation-for="Email"
+                          class="validation-message"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="UserName" class="form-label">Username</label>
+                    <input asp-for="UserName"
+                           class="form-control cinema-input"
+                           placeholder="Choose a username" />
+                    <span asp-validation-for="UserName"
+                          class="validation-message"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <input asp-for="Password"
+                           class="form-control cinema-input"
+                           placeholder="Minimum 8 characters" />
+                    <span asp-validation-for="Password"
+                          class="validation-message"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label">
+                        Confirm Password
+                    </label>
+                    <input asp-for="ConfirmPassword"
+                           class="form-control cinema-input"
+                           placeholder="Re-enter your password" />
+                    <span asp-validation-for="ConfirmPassword"
+                          class="validation-message"></span>
+                </div>
+
+                <button type="submit" class="register-btn">
+                    CREATE MY ACCOUNT
+                </button>
+
+            </form>
+
+            <div class="login-link">
+                Already have an account?
+                <a asp-area="Identity"
+                   asp-controller="Account"
+                   asp-action="Login">Sign In</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

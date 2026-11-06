@@ -1,14 +1,11 @@
 ﻿using Cinema_Booking_System.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cinema_Booking_System.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext()
-        {
-        }
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -19,6 +16,8 @@ namespace Cinema_Booking_System.Data
         public DbSet<Actor> Actors { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<MovieSubImage> MovieSubImages { get; set; }
+
+        public DbSet<ApplicationUserOtp> ApplicationUserOtps { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
